@@ -39,7 +39,8 @@ func main() {
 // Example 1
 func UserHandler(w http.ResponseWriter, r *http.Request, v validator.Validator) {
 	var request RequestUser
-	err := json.NewDecoder(r.Body).DecodeAndValidate(&request, v)
+	decoder := validator.Decoder{json.NewDecoder(r.Body)}
+	err := decoder.DecodeAndValidate(&request, v)
 	if err != nil {
 		// ...
     }
