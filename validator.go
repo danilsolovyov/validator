@@ -20,7 +20,7 @@ func NewValidator(s interface{}) Validator {
 
 func (v *Validator) AddValues(s interface{}) {
 	for i, _ := range v.fields {
-		v.fields[i].value = reflect.ValueOf(s).Elem().Field(i)
+		v.fields[i].value = reflect.ValueOf(s).Elem().Field(i).Interface()
 	}
 }
 
