@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 )
 
-type Decoder struct {
+type decoder struct {
 	json.Decoder
 }
 
-func (dec *Decoder) DecodeAndValidate(s interface{}, v Validator) error {
+func (dec *decoder) DecodeAndValidate(s interface{}, v Validator) error {
 	err := dec.Decoder.Decode(s)
 	if err != nil {
 		return err

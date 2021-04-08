@@ -9,9 +9,9 @@ import (
 )
 
 type field struct {
-	Name  string
-	Value interface{}
-	Tag   string
+	name  string
+	value interface{}
+	tag   string
 }
 
 type fields []field
@@ -20,9 +20,9 @@ func (v Validator) Validate() error {
 	var err error
 
 	for _, field := range v.fields {
-		field.Name = strings.ToLower(field.Name)
+		field.name = strings.ToLower(field.name)
 
-		switch field.Value.(type) {
+		switch field.value.(type) {
 		case int:
 			err = validateInt(field)
 			if err != nil {
@@ -53,14 +53,14 @@ func validateInt(field field) error {
 	equal, err := regexp.Compile("^=\\d+")
 	notEqual, err := regexp.Compile("^!=\\d+")
 
-	for _, validator := range strings.Split(field.Tag, separator) {
+	for _, validator := range strings.Split(field.tag, separator) {
 
 		if more.MatchString(validator) {
 			s := strings.Replace(validator, ">", "", -1)
 			x, _ := strconv.Atoi(s)
 
-			if field.Value.(int) <= x {
-				return ErrMustBeMore(field.Name, x)
+			if field.value.(int) <= x {
+				return ErrMustBeMore(field.name, x)
 			}
 		}
 
@@ -68,8 +68,8 @@ func validateInt(field field) error {
 			s := strings.Replace(validator, "<", "", -1)
 			x, _ := strconv.Atoi(s)
 
-			if field.Value.(int) >= x {
-				return ErrMustBeLess(field.Name, x)
+			if field.value.(int) >= x {
+				return ErrMustBeLess(field.name, x)
 			}
 		}
 
@@ -77,8 +77,8 @@ func validateInt(field field) error {
 			s := strings.Replace(validator, "<", "", -1)
 			x, _ := strconv.Atoi(s)
 
-			if field.Value.(int) != x {
-				return ErrMustBeEqual(field.Name, x)
+			if field.value.(int) != x {
+				return ErrMustBeEqual(field.name, x)
 			}
 		}
 
@@ -86,8 +86,8 @@ func validateInt(field field) error {
 			s := strings.Replace(validator, "<", "", -1)
 			x, _ := strconv.Atoi(s)
 
-			if field.Value.(int) == x {
-				return ErrMustNotBeEqual(field.Name, x)
+			if field.value.(int) == x {
+				return ErrMustNotBeEqual(field.name, x)
 			}
 		}
 	}
@@ -101,14 +101,14 @@ func validateFloat(field field) error {
 	equal, err := regexp.Compile("^=\\d+.\\d+")
 	notEqual, err := regexp.Compile("^!=\\d+.\\d+")
 
-	for _, validator := range strings.Split(field.Tag, separator) {
+	for _, validator := range strings.Split(field.tag, separator) {
 
 		if more.MatchString(validator) {
 			s := strings.Replace(validator, ">", "", -1)
 			x, _ := strconv.ParseFloat(s, 64)
 
-			if field.Value.(float64) <= x {
-				return ErrMustBeMore(field.Name, x)
+			if field.value.(float64) <= x {
+				return ErrMustBeMore(field.name, x)
 			}
 		}
 
@@ -116,8 +116,8 @@ func validateFloat(field field) error {
 			s := strings.Replace(validator, "<", "", -1)
 			x, _ := strconv.ParseFloat(s, 64)
 
-			if field.Value.(float64) >= x {
-				return ErrMustBeLess(field.Name, x)
+			if field.value.(float64) >= x {
+				return ErrMustBeLess(field.name, x)
 			}
 		}
 
@@ -125,8 +125,8 @@ func validateFloat(field field) error {
 			s := strings.Replace(validator, "<", "", -1)
 			x, _ := strconv.ParseFloat(s, 64)
 
-			if field.Value.(float64) != x {
-				return ErrMustBeEqual(field.Name, x)
+			if field.value.(float64) != x {
+				return ErrMustBeEqual(field.name, x)
 			}
 		}
 
@@ -134,8 +134,8 @@ func validateFloat(field field) error {
 			s := strings.Replace(validator, "<", "", -1)
 			x, _ := strconv.ParseFloat(s, 64)
 
-			if field.Value.(float64) == x {
-				return ErrMustNotBeEqual(field.Name, x)
+			if field.value.(float64) == x {
+				return ErrMustNotBeEqual(field.name, x)
 			}
 		}
 	}
@@ -144,8 +144,8 @@ func validateFloat(field field) error {
 }
 
 func validateString(field field) error {
-	if strings.Contains(field.Tag, "required") && field.Value.(string) == "" {
-		return ErrRequired(field.Name)
+	if strings.Contains(field.tag, "required") && field.value.(string) == "" {
+		return ErrRequired(field.name)
 	}
 
 	lenMore, err := regexp.Compile("^len>\\d+")
@@ -157,15 +157,15 @@ func validateString(field field) error {
 		return err
 	}
 
-	for _, validator := range strings.Split(field.Tag, separator) {
-		runeVal := []rune(field.Value.(string))
+	for _, validator := range strings.Split(field.tag, separator) {
+		runeVal := []rune(field.value.(string))
 
 		if lenMore.MatchString(validator) {
 			s := strings.Replace(validator, "len>", "", -1)
 			x, _ := strconv.Atoi(s)
 
 			if len(runeVal) <= x {
-				return ErrLenTooShort(field.Name)
+				return ErrLenTooShort(field.name)
 			}
 		}
 
@@ -174,7 +174,7 @@ func validateString(field field) error {
 			x, _ := strconv.Atoi(s)
 
 			if len(runeVal) >= x {
-				return ErrLenTooLong(field.Name)
+				return ErrLenTooLong(field.name)
 			}
 		}
 
@@ -183,7 +183,7 @@ func validateString(field field) error {
 			x, _ := strconv.Atoi(s)
 
 			if len(runeVal) != x {
-				return ErrLenMustBe(field.Name, x)
+				return ErrLenMustBe(field.name, x)
 			}
 		}
 
@@ -202,8 +202,8 @@ func validateString(field field) error {
 				return err
 			}
 
-			if !formatRegex.MatchString(field.Value.(string)) && len(runeVal) > 0 {
-				return ErrInvalidFormat(field.Name)
+			if !formatRegex.MatchString(field.value.(string)) && len(runeVal) > 0 {
+				return ErrInvalidFormat(field.name)
 			}
 		}
 	}
@@ -224,9 +224,9 @@ func getFields(s interface{}) fields {
 		f := reflect.TypeOf(s).Elem().Field(i)
 		result = append(result,
 			field{
-				Name:  f.Name,
-				Value: r.Elem().Field(i).Interface(),
-				Tag:   f.Tag.Get("validate"),
+				name:  f.Name,
+				value: r.Elem().Field(i).Interface(),
+				tag:   f.Tag.Get("validate"),
 			})
 	}
 
