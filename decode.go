@@ -5,7 +5,7 @@ import (
 )
 
 type Decoder struct {
-	json.Decoder
+	*json.Decoder
 }
 
 func (dec *Decoder) DecodeAndValidate(s interface{}, v Validator) error {
