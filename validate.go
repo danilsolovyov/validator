@@ -95,6 +95,54 @@ func validateInt(field field) error {
 	return err
 }
 
+func validateInt64(field field) error {
+	more, err := regexp.Compile("^>\\d+")
+	less, err := regexp.Compile("^<\\d+")
+	equal, err := regexp.Compile("^=\\d+")
+	notEqual, err := regexp.Compile("^!=\\d+")
+
+	for _, validator := range strings.Split(field.tag, separator) {
+
+		if more.MatchString(validator) {
+			s := strings.Replace(validator, ">", "", -1)
+			x, _ := strconv.ParseInt(s, 10, 64)
+
+			if field.value.(int64) <= x {
+				return ErrMustBeMore(field.name, x)
+			}
+		}
+
+		if less.MatchString(validator) {
+			s := strings.Replace(validator, "<", "", -1)
+			x, _ := strconv.ParseInt(s, 10, 64)
+
+			if field.value.(int64) >= x {
+				return ErrMustBeLess(field.name, x)
+			}
+		}
+
+		if equal.MatchString(validator) {
+			s := strings.Replace(validator, "<", "", -1)
+			x, _ := strconv.ParseInt(s, 10, 64)
+
+			if field.value.(int64) != x {
+				return ErrMustBeEqual(field.name, x)
+			}
+		}
+
+		if notEqual.MatchString(validator) {
+			s := strings.Replace(validator, "<", "", -1)
+			x, _ := strconv.ParseInt(s, 10, 64)
+
+			if field.value.(int64) == x {
+				return ErrMustNotBeEqual(field.name, x)
+			}
+		}
+	}
+
+	return err
+}
+
 func validateFloat(field field) error {
 	more, err := regexp.Compile("^>\\d+.\\d+")
 	less, err := regexp.Compile("^<\\d+.\\d+")
