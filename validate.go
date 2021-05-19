@@ -29,6 +29,12 @@ func (v Validator) Validate() error {
 				return err
 			}
 
+		case int64:
+			err = validateInt64(field)
+			if err != nil {
+				return err
+			}
+
 		case float64:
 			err = validateFloat(field)
 			if err != nil {
